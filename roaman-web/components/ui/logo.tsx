@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -16,7 +15,7 @@ export function Logo({ className, size = "md" }: LogoProps) {
   const imgClass = heights[size];
 
   return (
-    <Link href="/" className={cn("inline-flex items-center", className)}>
+    <div className={cn("inline-flex items-center", className)}>
       {/* Icon only on small screens */}
       <img
         src="/iconlogo.svg"
@@ -29,6 +28,6 @@ export function Logo({ className, size = "md" }: LogoProps) {
         alt="Roaman"
         className={cn("hidden md:block", imgClass)}
       />
-    </Link>
+    </div>
   );
 }

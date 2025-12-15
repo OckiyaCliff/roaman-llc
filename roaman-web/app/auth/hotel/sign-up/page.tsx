@@ -27,28 +27,61 @@ export default function HotelSignUpPage() {
     setIsLoading(true)
     setError(null)
 
+    console.log("[Hotel Sign-Up] Starting sign-up process...")
+    console.log("[Hotel Sign-Up] Email:", email)
+    console.log("[Hotel Sign-Up] Hotel Name:", hotelName)
+
     if (password !== repeatPassword) {
+      console.log("[Hotel Sign-Up] Error: Passwords do not match")
       setError("Passwords do not match")
       setIsLoading(false)
       return
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const redirectUrl = process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/hotel/dashboard`
+      console.log("[Hotel Sign-Up] Redirect URL:", redirectUrl)
+      console.log("[Hotel Sign-Up] Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo:
-            process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/hotel/dashboard`,
+          emailRedirectTo: redirectUrl,
           data: {
             user_type: "hotel",
             hotel_name: hotelName,
           },
         },
       })
-      if (error) throw error
+
+      console.log("[Hotel Sign-Up] Supabase Response - Data:", JSON.stringify(data, null, 2))
+      console.log("[Hotel Sign-Up] Supabase Response - Error:", error)
+
+      if (error) {
+        console.error("[Hotel Sign-Up] Supabase Error:", error.message, error.status, error.name)
+        throw error
+      }
+
+      if (data?.user) {
+        console.log("[Hotel Sign-Up] User created successfully!")
+        console.log("[Hotel Sign-Up] User ID:", data.user.id)
+        console.log("[Hotel Sign-Up] User Email:", data.user.email)
+        console.log("[Hotel Sign-Up] Email Confirmed:", data.user.email_confirmed_at)
+        console.log("[Hotel Sign-Up] Identities:", data.user.identities)
+      } else {
+        console.warn("[Hotel Sign-Up] No user data returned - this may indicate the email already exists or email confirmation is required")
+      }
+
+      if (data?.session) {
+        console.log("[Hotel Sign-Up] Session created (auto-confirm is ON)")
+      } else {
+        console.log("[Hotel Sign-Up] No session - email confirmation may be required")
+      }
+
       router.push("/auth/hotel/sign-up-success")
     } catch (error: unknown) {
+      console.error("[Hotel Sign-Up] Caught Error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)

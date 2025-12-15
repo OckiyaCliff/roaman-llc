@@ -26,12 +26,20 @@ export default function AdminLoginPage() {
     setIsLoading(true)
     setError(null)
 
+    console.log("[Admin Login] Starting login process...")
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
+      
+      console.log("[Admin Login] Auth result:", { user: data?.user?.id, error })
+      
       if (error) throw error
+
+      console.log("[Admin Login] User authenticated:", data.user.id)
+      console.log("[Admin Login] Checking platform_admins table...")
 
       // Verify admin status
       const { data: adminRecord, error: adminError } = await supabase
@@ -41,13 +49,34 @@ export default function AdminLoginPage() {
         .eq("is_active", true)
         .single()
 
-      if (adminError || !adminRecord) {
+      console.log("[Admin Login] Admin query result:", { adminRecord, adminError })
+
+      if (adminError) {
+        console.error("[Admin Login] Admin query error:", adminError.message, adminError.code, adminError.details)
+        
+        if (adminError.code === "PGRST116") {
+          // No rows returned - user is not an admin
+          await supabase.auth.signOut()
+          throw new Error("Access denied. Admin privileges required.")
+        } else if (adminError.code === "42P01" || adminError.message?.includes("does not exist")) {
+          // Table doesn't exist
+          await supabase.auth.signOut()
+          throw new Error("Database not configured. Please run the SQL setup scripts in Supabase.")
+        } else {
+          await supabase.auth.signOut()
+          throw new Error(`Database error: ${adminError.message}`)
+        }
+      }
+
+      if (!adminRecord) {
         await supabase.auth.signOut()
         throw new Error("Access denied. Admin privileges required.")
       }
 
+      console.log("[Admin Login] Admin verified! Role:", adminRecord.role)
       router.push("/admin/dashboard")
     } catch (error: unknown) {
+      console.error("[Admin Login] Error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
