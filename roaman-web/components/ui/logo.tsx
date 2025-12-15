@@ -1,16 +1,34 @@
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface LogoProps {
-  className?: string
-  size?: "sm" | "md" | "lg"
+  className?: string;
+  size?: "sm" | "md" | "lg";
 }
 
 export function Logo({ className, size = "md" }: LogoProps) {
-  const sizes = {
-    sm: "text-lg",
-    md: "text-xl",
-    lg: "text-2xl",
-  }
+  const heights: Record<NonNullable<LogoProps["size"]>, string> = {
+    sm: "h-5",
+    md: "h-6",
+    lg: "h-8",
+  };
 
-  return <span className={cn("font-semibold tracking-tight", sizes[size], className)}>roaman</span>
+  const imgClass = heights[size];
+
+  return (
+    <Link href="/" className={cn("inline-flex items-center", className)}>
+      {/* Icon only on small screens */}
+      <img
+        src="/iconlogo.svg"
+        alt="Roaman"
+        className={cn("block md:hidden", imgClass)}
+      />
+      {/* Full wordmark on medium and up */}
+      <img
+        src="/iconlogofull.svg"
+        alt="Roaman"
+        className={cn("hidden md:block", imgClass)}
+      />
+    </Link>
+  );
 }
