@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BedDouble, CalendarCheck, DollarSign, TrendingUp } from "lucide-react"
+import { BedDouble, CalendarCheck, DollarSign, TrendingUp, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -23,9 +23,20 @@ export default async function HotelDashboardPage() {
     .eq("is_active", true)
     .single()
 
-  // If no hotel assigned, redirect to onboarding
+  // If no hotel assigned, show message
   if (!staffRecord) {
-    redirect("/auth/hotel/onboarding")
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+        <h1 className="text-2xl font-bold mb-2">No Hotel Assigned</h1>
+        <p className="text-muted-foreground max-w-md mb-6">
+          Your account is not yet linked to a hotel. Please contact the platform administrator to complete your hotel setup.
+        </p>
+        <Button asChild>
+          <Link href="/contact">Contact Support</Link>
+        </Button>
+      </div>
+    )
   }
 
   const hotel = staffRecord.hotels as any

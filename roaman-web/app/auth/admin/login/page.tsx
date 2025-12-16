@@ -87,9 +87,9 @@ export default function AdminLoginPage() {
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-background">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 rounded-lg bg-foreground flex items-center justify-center mb-4">
+          {/* <div className="h-12 w-12 rounded-lg bg-foreground flex items-center justify-center mb-4">
             <Shield className="h-6 w-6 text-background" />
-          </div>
+          </div> */}
           <Logo size="lg" />
           <p className="text-muted-foreground mt-2">Platform Administration</p>
         </div>

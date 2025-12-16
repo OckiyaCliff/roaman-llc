@@ -52,13 +52,20 @@ Hotel operators can:
 - Configure pricing rules
 - View booking history and guest information
 
+**Hotel Account Creation:**
+- Hotel accounts are created by platform administrators only
+- Admins generate a default password for new hotel accounts
+- Hotel owners must change their password on first login
+- Hotels cannot self-register (contact admin to get started)
+
 ### Platform admin (authenticated)
 
 Admins can:
 
-- Onboard/manage hotels
+- Create hotel accounts with owner credentials
+- Manage hotels and hotel staff
 - Monitor platform activity and audits
-- Manage staff/admin accounts
+- Manage platform admin accounts
 - Oversee disputes and platform-wide configuration
 
 ## Codebase tour

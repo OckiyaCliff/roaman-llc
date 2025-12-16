@@ -26,12 +26,20 @@ export default function HotelLoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       if (error) throw error
-      router.push("/hotel/dashboard")
+
+      // Check if user needs to change password
+      const requiresPasswordChange = data.user?.user_metadata?.requires_password_change
+      
+      if (requiresPasswordChange) {
+        router.push("/auth/hotel/change-password")
+      } else {
+        router.push("/hotel/dashboard")
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
