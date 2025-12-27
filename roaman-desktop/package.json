@@ -1,12 +1,50 @@
 {
   "name": "roaman-desktop",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Roaman Hotel Management Desktop App",
+  "main": "dist-electron/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc && vite build && electron-builder",
+    "preview": "vite preview",
+    "electron:dev": "vite build && electron .",
+    "electron:build": "vite build && electron-builder"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["hotel", "management", "roaman"],
+  "author": "Roaman",
+  "license": "ISC",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
+    "vite": "^7.3.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  },
+  "build": {
+    "appId": "com.roaman.desktop",
+    "productName": "Roaman Hotel Manager",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
 }
